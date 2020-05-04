@@ -36,11 +36,24 @@ func Exporter(config *rest.Config) {
 	}
 
 	// Register the fixed (count) chaos metrics
-	klog.V(0).Infof("Registering Fixed Metrics")
-	registerFixedMetrics()
+	klog.V(0).Infof("Registering Litmus Fixed Metrics")
+	registerLitmusFixedMetrics()
 
 	for {
 		GetLitmusChaosMetrics(litmusClientSet)
+		time.Sleep(1000 * time.Millisecond)
+	}
+}
+
+func EventsExporter(config *rest.Config) {
+	kubeClient, _, err := generateClientSets(config)
+	klog.V(0).Infof("Started creating Metrics")
+	if err != nil {
+		klog.Error(err)
+	}
+
+	for {
+		GetKubernetesEvents(kubeClient)
 		time.Sleep(1000 * time.Millisecond)
 	}
 }
@@ -58,7 +71,7 @@ func generateClientSets(config *rest.Config) (*kubernetes.Clientset, *clientV1al
 	return k8sClientSet, litmusClientSet, nil
 }
 
-func registerFixedMetrics() {
+func registerLitmusFixedMetrics() {
 	prometheus.MustRegister(EngineTotalExperiments)
 	prometheus.MustRegister(EnginePassedExperiments)
 	prometheus.MustRegister(EngineFailedExperiments)
@@ -67,4 +80,8 @@ func registerFixedMetrics() {
 	prometheus.MustRegister(ClusterTotalExperiments)
 	prometheus.MustRegister(ClusterFailedExperiments)
 	prometheus.MustRegister(ClusterPassedExperiments)
+}
+
+func registerEventFixedMetrics() {
+	prometheus.MustRegister(KubernetesEvent)
 }

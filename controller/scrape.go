@@ -21,6 +21,7 @@ import (
 	"strings"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	"k8s.io/klog"
 
@@ -28,8 +29,13 @@ import (
 	clientV1alpha1 "github.com/litmuschaos/chaos-operator/pkg/client/clientset/versioned"
 )
 
-// Holds list of experiments in a chaosengine
-var chaosExperimentList []string
+func GetKubernetesEvents(clientset *kubernetes.Clientset) error {
+	allEvents, err := clientset.CoreV1().Events("").List(metav1.ListOptions{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 // GetLitmusChaosMetrics returns chaos metrics for a given chaosengine
 func GetLitmusChaosMetrics(clientSet *clientV1alpha1.Clientset) error {

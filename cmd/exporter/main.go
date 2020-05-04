@@ -61,6 +61,7 @@ func main() {
 	}
 	// Trigger the chaos metrics collection
 	go controller.Exporter(config)
+	go controller.EventsExporter(config)
 	//This section will start the HTTP server and expose metrics on the /metrics endpoint.
 	http.Handle("/metrics", promhttp.Handler())
 	log.Info("Beginning to serve on port :8080")

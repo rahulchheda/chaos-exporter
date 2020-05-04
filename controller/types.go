@@ -92,6 +92,17 @@ var (
 	)
 )
 
+var (
+	KubernetesEvent = prometheus.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: "",
+		Subsystem: "",
+		Name:      "kubernetes",
+		Help:      "State of kubernetes events",
+	},
+		[]string{"event_kind, event_message, event_name,event_namespace,event_reason, event_source,event_subobject, event_type"},
+	)
+)
+
 // ChaosMetricsSpec contains the specs related to chaos metrics
 type ChaosMetricsSpec struct {
 	ExpTotal   float64
